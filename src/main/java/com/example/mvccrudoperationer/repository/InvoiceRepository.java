@@ -12,6 +12,27 @@ import java.util.List;
  */
 public class InvoiceRepository extends BaseRepository{
 
+    public InvoiceRepository(){
+        super();
+        String creationQuery = "CREATE TABLE `invoices` (\n" +
+                "  `title` varchar(32) NOT NULL,\n" +
+                "  `date` date NOT NULL,\n" +
+                "  `description` varchar(32) NOT NULL,\n" +
+                "  `category` varchar(32) NOT NULL,\n" +
+                "  `price` double NOT NULL,\n" +
+                "  `owner` int(11) NOT NULL,\n" +
+                "  `id` int(11) NOT NULL AUTO_INCREMENT,\n" +
+                "   PRIMARY KEY (id),\n" +
+                "   FOREIGN KEY (owner) REFERENCES users(id)\n" +
+                ");";
+        try {
+            connection.prepareCall(creationQuery).execute();
+        } catch (SQLException e) {
+            if(!e.getLocalizedMessage().contains("already exists")) throw new RuntimeException(e);
+        }
+    }
+
+
     public void create(InvoiceEntry invoiceEntry) {
         try {
             PreparedStatement ps = connection.prepareCall("INSERT INTO invoices(title, date, description, category, price, owner) VALUES (?,?,?,?,?,?)");
